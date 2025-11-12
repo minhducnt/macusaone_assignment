@@ -1,6 +1,6 @@
 # MERN Authentication Frontend
 
-A modern, scalable frontend application built with Next.js 14+ and TypeScript, featuring Clean Architecture principles.
+A modern, scalable frontend application built with Next.js 16 and TypeScript, featuring Clean Architecture principles.
 
 ## 🏗️ Architecture
 
@@ -138,27 +138,39 @@ NEXT_PUBLIC_ENABLE_ERROR_REPORTING=true
 
 ```
 src/
-├── app/                    # Next.js App Router pages
-├── domain/                 # Business entities & rules
-│   ├── entities/          # Domain models
-│   ├── repositories/      # Repository interfaces
-│   └── services/          # Domain services
-├── application/           # Application use cases
-│   ├── use-cases/         # Application logic
-│   └── services/          # Application services
-├── infrastructure/        # External concerns
-│   ├── api/              # HTTP client & API services
-│   ├── repositories/     # Repository implementations
-│   └── storage/          # Local storage utilities
-├── presentation/          # UI Layer
-│   ├── components/       # React components
-│   ├── contexts/         # React contexts
-│   ├── hooks/            # Custom hooks
-│   └── pages/            # Page components
-└── shared/               # Shared utilities
-    ├── constants/        # App constants
-    ├── types/            # TypeScript types
-    └── utils/            # Utility functions
+├── app/                      # Next.js App Router pages
+│   ├── dashboard/            # Protected dashboard routes
+│   │   └── [role]/           # Dynamic role-based routes
+│   ├── login/                # Login page
+│   ├── register/             # Register page
+│   ├── profile/              # Profile page
+│   ├── layout.tsx            # Root layout
+│   ├── page.tsx              # Home page
+│   └── globals.css           # Global styles
+├── domain/                   # Domain layer (business rules)
+│   ├── entities/             # Domain entities
+│   ├── repositories/         # Repository interfaces
+│   └── services/             # Domain services
+├── application/              # Application layer (use cases)
+│   └── use-cases/            # Application logic
+├── infrastructure/           # Infrastructure layer (external concerns)
+│   ├── api/                  # HTTP client & API services
+│   ├── repositories/         # Repository implementations
+│   └── storage/              # Local storage utilities
+├── presentation/             # Presentation layer (UI)
+│   ├── components/           # React components
+│   │   ├── atoms/            # Atomic components
+│   │   ├── molecules/        # Molecular components
+│   │   ├── organisms/        # Organism components
+│   │   ├── pages/            # Page components
+│   │   ├── providers/        # Context providers
+│   │   └── templates/        # Layout templates
+│   ├── contexts/             # React contexts
+│   └── hooks/                # Custom hooks
+└── shared/                   # Shared utilities
+    ├── constants/            # Application constants
+    ├── types/                # TypeScript types
+    └── utils/                # Utility functions
 ```
 
 ## 🔧 Available Scripts

@@ -440,13 +440,14 @@ graph TD
 ## 🎯 Technology Stack Summary
 
 ### **Frontend Technologies**
-- **Framework:** Next.js 15 (App Router)
+- **Framework:** Next.js 16.0.1 (App Router)
 - **Language:** TypeScript
-- **Styling:** Tailwind CSS
+- **Styling:** Tailwind CSS v4
 - **State Management:** React Context + Hooks
 - **HTTP Client:** Axios
 - **UI Components:** Radix UI + Custom Components
 - **Form Handling:** React Hook Form + Zod Validation
+- **Charts:** Recharts for data visualization
 
 ### **Backend Technologies**
 - **Runtime:** Node.js 18 LTS

@@ -56,16 +56,17 @@ A full-stack MERN (MongoDB, Express.js, React, Node.js) application with role-ba
 - **helmet** and **cors** for security
 
 ### Frontend
-- **Next.js 16** with TypeScript and App Router
-- **React** with TypeScript
-- **Tailwind CSS** for styling
+- **Next.js 16.0.1** with TypeScript and App Router
+- **React 19.2.0** with TypeScript
+- **Tailwind CSS v4** for styling
 - **Radix UI** for components
 - **Shadcn UI** for component library
 - **React Hook Form** with Zod for form validation
+- **Recharts** for data visualization
 - **Next.js App Router** with dynamic routes (`/dashboard/[role]`, `/api/user/[id]`)
 - **Server Components** for better performance and SEO
 - **Middleware** for authentication and route protection
-- **API Routes** for server-side functionality
+- **Clean Architecture** with domain-driven design
 - **Axios** for API calls
 
 ### Server
@@ -96,35 +97,84 @@ Comprehensive documentation is available in the `docs/` folder:
 ## Project Structure
 
 ```
-mern-auth-app/
-├── backend/                 # Node.js/Express backend
-│   ├── config/             # Database and configuration
-│   ├── controllers/        # Route controllers
-│   ├── middleware/         # Authentication and error handling
-│   ├── models/            # MongoDB models
-│   ├── routes/            # API routes
-│   └── utils/             # Utility functions
-├── frontend/               # Next.js frontend
+macusaone/
+├── backend/                          # Node.js/Express backend
 │   ├── src/
-│   │   ├── app/           # Next.js App Router
-│   │   │   ├── api/       # API Routes
-│   │   │   │   ├── auth/  # Authentication API routes
-│   │   │   │   └── user/  # User API routes with dynamic [id]
-│   │   │   ├── login/     # Login page
-│   │   │   ├── register/  # Register page
-│   │   │   ├── dashboard/ # Protected dashboard
-│   │   │   │   └── [role]/ # Dynamic role-based routes
-│   │   │   ├── profile/   # Server component profile page
-│   │   │   ├── layout.tsx # Root layout
-│   │   │   ├── page.tsx   # Home page with redirects
-│   │   │   └── globals.css # Tailwind styles
-│   │   ├── components/    # Reusable UI components (Shadcn UI)
-│   │   ├── contexts/      # React contexts
-│   │   ├── lib/           # Utilities
-│   │   └── middleware.ts  # Next.js middleware
-│   └── public/            # Static assets
-├── openlitespeed-config/   # OpenLiteSpeed configuration
-└── README.md
+│   │   ├── application/              # Application layer (use cases)
+│   │   │   ├── dto/                  # Data transfer objects
+│   │   │   └── use-cases/            # Business logic use cases
+│   │   │       ├── auth/             # Authentication use cases
+│   │   │       ├── files/            # File management use cases
+│   │   │       └── users/            # User management use cases
+│   │   ├── domain/                   # Domain layer (business rules)
+│   │   │   ├── entities/             # Domain entities
+│   │   │   ├── repositories/         # Repository interfaces
+│   │   │   │   └── interfaces/       # Repository contracts
+│   │   │   └── value-objects/        # Value objects
+│   │   ├── infrastructure/           # Infrastructure layer
+│   │   │   ├── config/               # Configuration files
+│   │   │   ├── controllers/          # HTTP controllers
+│   │   │   ├── middleware/           # Express middleware
+│   │   │   ├── models/               # MongoDB models
+│   │   │   ├── repositories/         # Repository implementations
+│   │   │   ├── routes/               # API routes
+│   │   │   └── services/             # External services
+│   │   └── shared/                   # Shared utilities
+│   │       ├── kernel/               # Dependency injection
+│   │       └── services/             # Shared services
+│   ├── migrations/                   # Database migrations
+│   ├── seeds/                        # Database seeders
+│   ├── scripts/                      # Utility scripts
+│   ├── env/                          # Environment configurations
+│   └── package.json                  # Backend dependencies
+├── frontend/                         # Next.js frontend
+│   ├── src/
+│   │   ├── app/                      # Next.js App Router
+│   │   │   ├── dashboard/            # Protected dashboard routes
+│   │   │   │   └── [role]/           # Dynamic role-based routes
+│   │   │   ├── login/                # Login page
+│   │   │   ├── register/             # Register page
+│   │   │   ├── profile/              # Profile page
+│   │   │   ├── layout.tsx            # Root layout
+│   │   │   ├── page.tsx              # Home page
+│   │   │   └── globals.css           # Global styles
+│   │   ├── domain/                   # Domain layer
+│   │   │   ├── entities/             # Domain entities
+│   │   │   ├── repositories/         # Repository interfaces
+│   │   │   └── services/             # Domain services
+│   │   ├── application/              # Application layer
+│   │   │   └── use-cases/            # Application use cases
+│   │   ├── infrastructure/           # Infrastructure layer
+│   │   │   ├── api/                  # API client
+│   │   │   ├── repositories/         # Repository implementations
+│   │   │   └── storage/              # Local storage utilities
+│   │   ├── presentation/             # Presentation layer
+│   │   │   ├── components/           # React components
+│   │   │   │   ├── atoms/            # Atomic components
+│   │   │   │   ├── molecules/        # Molecular components
+│   │   │   │   ├── organisms/        # Organism components
+│   │   │   │   ├── pages/            # Page components
+│   │   │   │   ├── providers/        # Context providers
+│   │   │   │   └── templates/        # Layout templates
+│   │   │   ├── contexts/             # React contexts
+│   │   │   └── hooks/                # Custom hooks
+│   │   └── shared/                   # Shared utilities
+│   │       ├── constants/            # Application constants
+│   │       ├── types/                # TypeScript types
+│   │       └── utils/                # Utility functions
+│   ├── public/                       # Static assets
+│   └── package.json                  # Frontend dependencies
+├── docs/                             # Documentation
+│   ├── API.md                        # API documentation
+│   ├── ARCHITECTURE.md               # Architecture documentation
+│   ├── BACKEND.md                    # Backend documentation
+│   ├── COMPONENTS.md                 # Component documentation
+│   ├── DEVELOPMENT.md                # Development guide
+│   ├── REQUIREMENT.md                # Requirements
+│   ├── SETUP.md                      # Setup guide
+│   └── SYSTEM-OVERVIEW.md           # System overview
+├── openlitespeed-config/             # OpenLiteSpeed configuration
+└── README.md                         # Main project documentation
 ```
 
 ## Getting Started
@@ -210,6 +260,22 @@ The frontend will be running on `http://localhost:3000`
 - `POST /api/auth/logout` - Logout user
 - `GET /api/auth/me` - Get current user profile
 - `PUT /api/auth/profile` - Update user profile
+
+### User Management (Backend)
+- `GET /api/users` - Get users with pagination and filtering (Manager+)
+- `POST /api/users` - Create new user (Admin only)
+- `GET /api/users/:id` - Get user by ID
+- `PUT /api/users/:id` - Update user by ID
+- `DELETE /api/users/:id` - Delete user by ID (Manager+)
+- `GET /api/users/stats` - Get user statistics (Admin only)
+
+### File Management (Backend)
+- `GET /api/files` - Get files with pagination and filtering
+- `POST /api/files` - Upload new file
+- `GET /api/files/:id` - Get file metadata by ID
+- `GET /api/files/:id/download` - Download file by ID
+- `PUT /api/files/:id` - Update file metadata by ID
+- `DELETE /api/files/:id` - Delete file by ID
 
 ### Frontend API Routes (Next.js)
 - `GET /api/auth/status` - Check authentication status

@@ -471,15 +471,148 @@ Each component includes:
 - Reusable across multiple molecules
 - No complex logic or state
 
+#### StatCard (`stat-card.tsx`)
+A statistics display component with trend indicators and customizable variants.
+
+**Props:**
+```typescript
+interface StatCardProps {
+  title: string;
+  value: string | number;
+  description?: string;
+  icon?: LucideIcon;
+  trend?: {
+    value: number;
+    label: string;
+    isPositive: boolean;
+  };
+  variant?: 'default' | 'success' | 'warning' | 'danger';
+  className?: string;
+}
+```
+
+**Usage:**
+```tsx
+import { StatCard } from '@/components/molecules/stat-card'
+import { Users } from 'lucide-react'
+
+<StatCard
+  title="Total Users"
+  value="1,234"
+  description="Active users this month"
+  icon={Users}
+  trend={{ value: 12, label: "vs last month", isPositive: true }}
+  variant="success"
+/>
+```
+
 ### When to Create Molecules
 - Form components
 - Related input groups
 - Small functional units
+- Statistics display components
+
+#### Charts (`charts.tsx`)
+A comprehensive charting component library using Recharts with multiple chart types.
+
+**Components:**
+- `TrendChart` - Line chart for displaying trends over time
+- `ComparisonChart` - Bar chart for comparing different categories
+- `DistributionChart` - Pie chart for showing data distribution
+
+**TrendChart Props:**
+```typescript
+interface TrendChartProps {
+  data: Array<{ name: string; value: number; [key: string]: any }>;
+  dataKey?: string;
+  color?: string;
+  className?: string;
+}
+```
+
+**Usage:**
+```tsx
+import { TrendChart, ComparisonChart, DistributionChart } from '@/components/organisms/charts'
+
+const trendData = [
+  { name: 'Jan', value: 400 },
+  { name: 'Feb', value: 300 },
+  { name: 'Mar', value: 600 }
+];
+
+<TrendChart data={trendData} color="#3b82f6" />
+```
 
 ### When to Create Organisms
 - Page sections
 - Complex layouts
 - Feature-specific components
+- Data visualization components
+
+## 📐 Templates (Layout Components)
+
+Templates are page-level components that provide consistent layouts and structure for different types of pages.
+
+### Location: `src/components/templates/`
+
+#### DashboardLayout (`dashboard-layout.tsx`)
+A comprehensive dashboard layout with sidebar navigation, header, and responsive design.
+
+**Props:**
+```typescript
+interface DashboardLayoutProps {
+  children: React.ReactNode;
+  title?: string;
+  headerActions?: React.ReactNode;
+}
+```
+
+**Features:**
+- Authentication protection
+- Responsive sidebar navigation
+- Header with user actions
+- Loading states
+- Mobile-friendly design
+
+**Usage:**
+```tsx
+import { DashboardLayout } from '@/components/templates/dashboard-layout'
+
+export default function DashboardPage() {
+  return (
+    <DashboardLayout title="Dashboard" headerActions={<Button>Export</Button>}>
+      <div className="space-y-6">
+        {/* Dashboard content */}
+      </div>
+    </DashboardLayout>
+  );
+}
+```
+
+#### AuthTemplate (`auth-template.tsx`)
+A centered layout template for authentication pages (login, register, etc.).
+
+**Props:**
+```typescript
+interface AuthTemplateProps {
+  children: React.ReactNode;
+  title: string;
+  subtitle?: string;
+}
+```
+
+**Usage:**
+```tsx
+import { AuthTemplate } from '@/components/templates/auth-template'
+
+export default function LoginPage() {
+  return (
+    <AuthTemplate title="Welcome Back" subtitle="Sign in to your account">
+      <LoginForm />
+    </AuthTemplate>
+  );
+}
+```
 
 ### Naming Conventions
 - **Atoms**: PascalCase (Button, Input, Card)

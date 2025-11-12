@@ -8,7 +8,8 @@ The API follows RESTful conventions and provides endpoints for authentication, u
 
 **Base URL:** `http://localhost:5000/api` (development)  
 **Authentication:** JWT Bearer tokens  
-**Content-Type:** `application/json`
+**Content-Type:** `application/json`  
+**API Version:** v1
 
 ## 🔐 Authentication
 
@@ -148,44 +149,376 @@ Content-Type: application/json
 
 ## 👤 User Management
 
-### Get User Profile
+### Get Users
 
-Retrieve a user's profile information by ID.
+Retrieve users with pagination and filtering (Manager and Admin roles only).
 
 ```http
-GET /api/user/:id
+GET /api/users?page=1&limit=10&email=user@example.com&role=staff&isActive=true&isEmailVerified=true
 Authorization: Bearer <token>
 ```
 
 **Parameters:**
-- `id` (path): User ID
+- `page` (optional): Page number (default: 1)
+- `limit` (optional): Items per page (default: 10, max: 100)
+- `email` (optional): Filter by email
+- `role` (optional): Filter by role (admin, manager, staff)
+- `isActive` (optional): Filter by active status
+- `isEmailVerified` (optional): Filter by email verification status
 
 **Response (200):**
 ```json
 {
   "success": true,
-  "user": {
-    "id": "string",
-    "name": "John Doe",
-    "email": "john@example.com",
-    "role": "staff",
-    "createdAt": "2024-01-01T00:00:00.000Z",
-    "lastLogin": "2024-01-01T00:00:00.000Z"
+  "data": {
+    "users": [
+      {
+        "id": "string",
+        "firstName": "John",
+        "lastName": "Doe",
+        "email": "john@example.com",
+        "role": "staff",
+        "isActive": true,
+        "isEmailVerified": true,
+        "lastLogin": "2024-01-01T00:00:00.000Z",
+        "createdAt": "2024-01-01T00:00:00.000Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 10,
+      "total": 25,
+      "pages": 3
+    }
   }
 }
 ```
 
-**Response (403):**
+### Get User Statistics
+
+Retrieve user statistics (Admin role only).
+
+```http
+GET /api/users/stats
+Authorization: Bearer <token>
+```
+
+**Response (200):**
 ```json
 {
-  "message": "Unauthorized to access this user"
+  "success": true,
+  "data": {
+    "stats": {
+      "total": 150,
+      "active": 145,
+      "inactive": 5,
+      "byRole": {
+        "admin": 5,
+        "manager": 15,
+        "staff": 130
+      },
+      "verifiedEmails": 140,
+      "unverifiedEmails": 10,
+      "recentLogins": 45
+    }
+  }
 }
 ```
 
-**Response (404):**
+### Create User
+
+Create a new user (Admin role only).
+
+```http
+POST /api/users
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@example.com",
+  "password": "password123",
+  "role": "staff"
+}
+```
+
+**Parameters:**
+- `firstName` (required): User's first name
+- `lastName` (required): User's last name
+- `email` (required): Valid email address
+- `password` (required): Password (minimum 8 characters)
+- `role` (optional): User role (admin, manager, staff), defaults to "staff"
+
+**Response (201):**
 ```json
 {
-  "message": "User not found"
+  "success": true,
+  "data": {
+    "user": {
+      "id": "string",
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john@example.com",
+      "role": "staff",
+      "isActive": true,
+      "isEmailVerified": false,
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  }
+}
+```
+
+### Get User by ID
+
+Retrieve a user by ID.
+
+```http
+GET /api/users/:id
+Authorization: Bearer <token>
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "user": {
+      "id": "string",
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john@example.com",
+      "role": "staff",
+      "isActive": true,
+      "isEmailVerified": true,
+      "lastLogin": "2024-01-01T00:00:00.000Z",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  }
+}
+```
+
+### Update User
+
+Update user information by ID.
+
+```http
+PUT /api/users/:id
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Smith",
+  "role": "manager",
+  "isActive": true
+}
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "user": {
+      "id": "string",
+      "firstName": "John",
+      "lastName": "Smith",
+      "email": "john@example.com",
+      "role": "manager",
+      "isActive": true,
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    }
+  }
+}
+```
+
+### Delete User
+
+Delete user by ID (Manager and Admin roles only).
+
+```http
+DELETE /api/users/:id
+Authorization: Bearer <token>
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "message": "User deleted successfully"
+}
+```
+
+## 📁 File Management
+
+### Get Files
+
+Retrieve files with pagination and filtering.
+
+```http
+GET /api/files?page=1&limit=10&sortBy=createdAt&sortOrder=desc
+Authorization: Bearer <token>
+```
+
+**Parameters:**
+- `page` (optional): Page number (default: 1)
+- `limit` (optional): Items per page (default: 10, max: 50)
+- `sortBy` (optional): Sort field (createdAt, filename, size) (default: createdAt)
+- `sortOrder` (optional): Sort order (asc, desc) (default: desc)
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "files": [
+      {
+        "id": "string",
+        "filename": "document.pdf",
+        "originalName": "My Document.pdf",
+        "mimeType": "application/pdf",
+        "size": 1024000,
+        "isPublic": false,
+        "uploadedBy": "user_id",
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "updatedAt": "2024-01-01T00:00:00.000Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 10,
+      "total": 25,
+      "pages": 3
+    }
+  }
+}
+```
+
+### Upload File
+
+Upload a new file.
+
+```http
+POST /api/files
+Authorization: Bearer <token>
+Content-Type: multipart/form-data
+
+file: <binary file data>
+isPublic: false
+```
+
+**Parameters:**
+- `file` (required): File to upload (max 5MB)
+- `isPublic` (optional): Whether file is publicly accessible (default: false)
+
+**Supported file types:**
+- Images: JPEG, PNG, GIF, WebP
+- Documents: PDF, Plain text
+
+**Response (201):**
+```json
+{
+  "success": true,
+  "data": {
+    "file": {
+      "id": "string",
+      "filename": "document.pdf",
+      "originalName": "My Document.pdf",
+      "mimeType": "application/pdf",
+      "size": 1024000,
+      "isPublic": false,
+      "uploadedBy": "user_id",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  }
+}
+```
+
+### Get File Metadata
+
+Retrieve file metadata by ID.
+
+```http
+GET /api/files/:id
+Authorization: Bearer <token>
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "file": {
+      "id": "string",
+      "filename": "document.pdf",
+      "originalName": "My Document.pdf",
+      "mimeType": "application/pdf",
+      "size": 1024000,
+      "isPublic": false,
+      "uploadedBy": "user_id",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    }
+  }
+}
+```
+
+### Download File
+
+Download file content by ID.
+
+```http
+GET /api/files/:id/download
+Authorization: Bearer <token>
+```
+
+**Response (200):** Binary file content with appropriate headers
+
+### Update File Metadata
+
+Update file metadata (filename, public status).
+
+```http
+PUT /api/files/:id
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "filename": "new-name.pdf",
+  "isPublic": true
+}
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "file": {
+      "id": "string",
+      "filename": "new-name.pdf",
+      "isPublic": true,
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    }
+  }
+}
+```
+
+### Delete File
+
+Delete file by ID.
+
+```http
+DELETE /api/files/:id
+Authorization: Bearer <token>
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "message": "File deleted successfully"
 }
 ```
 
@@ -441,4 +774,4 @@ npm run test:api
 
 **API Version:** 1.0.0  
 **Last Updated:** November 2025  
-**Contact:** API Support Team
+**Contact:** Development Team
